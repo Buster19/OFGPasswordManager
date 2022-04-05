@@ -380,7 +380,6 @@ public class MainController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
         try {
-             // set background
         	Font font = Font.loadFont(new FileInputStream(new File("bin/application/fonts/Electrolize-Regular.ttf")), 40);
         	mainTitle.setFont(font);
         	
