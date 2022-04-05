@@ -1,0 +1,13 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.button{
+    -fx-shape: "M 250 300 A 50 50 0 1 1 450 300 A 50 50 0 1 1 250 300"; 
+    -fx-background-color: transparent;
+    -fx-font-size: 13;
+}
+.circle{
+	-fx-background-color: transparent;
+}
+#MainPane{
+    -fx-background-image: url("background/carbonfiber.png");
+}
