@@ -1,6 +1,12 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
-
+@font-face {
+    src: url("Resources/fonts/Electrolize-Regular.ttf");
+}
+#mainTitle{
+    -fx-font-family: 'Electrolize';
+    -fx-font-size: 40;
+}
 .button{
+    -fx-font-family: 'Electrolize';
     -fx-shape: "M 250 300 A 50 50 0 1 1 450 300 A 50 50 0 1 1 250 300"; 
     -fx-background-color: transparent;
     -fx-font-size: 13;
@@ -9,5 +15,5 @@
 	-fx-background-color: transparent;
 }
 .root{
-    -fx-background-image: url("background/carbonfiber.png");
+    -fx-background-image: url("Resources/background/carbonfiber.png");
 }
