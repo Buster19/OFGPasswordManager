@@ -38,7 +38,7 @@
                   <StackPane prefHeight="150.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Circle fx:id="circle2" fill="#ffffff00" radius="50.0" stroke="#c6c6c6" strokeDashOffset="10.0" strokeType="INSIDE" strokeWidth="15.0" style="-fx-stroke-dash-array: 50;" />
-                        <Button fx:id="newFile" maxWidth="-Infinity" mnemonicParsing="false" onMouseEntered="#mouseEnteredButton" onMouseExited="#mouseExitedButton" prefHeight="50.0" prefWidth="80.0" text="New File" textFill="WHITE" />
+                        <Button fx:id="newFile" maxWidth="-Infinity" mnemonicParsing="false" onAction="#switchToFileCreation" onMouseEntered="#mouseEnteredButton" onMouseExited="#mouseExitedButton" prefHeight="50.0" prefWidth="80.0" stylesheets="@../application.css" text="New File" textFill="WHITE" />
                      </children>
                   </StackPane>
                </children>

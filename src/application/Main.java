@@ -35,6 +35,8 @@ public class Main extends Application {
 			Scene scene = new Scene(root,600,600);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
+			MainController controller = loader.getController();
+			controller.setStage(primaryStage);
 			primaryStage.setTitle("Off The Grid");
 			primaryStage.show();
 		} catch(Exception e) {
