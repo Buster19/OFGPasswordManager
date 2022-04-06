@@ -4,6 +4,8 @@ package application.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +19,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -371,6 +376,16 @@ public class MainController implements Initializable {
 	    Optional<String> result = dialog.showAndWait();
 		return result.get();
 	}
+	@FXML
+	private void switchToFileCreation(ActionEvent event) throws IOException {
+		URL file = new File("src/application/view/FileCreation.fxml").toURI().toURL();
+		Parent root = FXMLLoader.load(file);
+		Scene scene = new Scene(root,600,600);
+		scene.getStylesheets().add("application/application.css");
+		stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+		stage.setScene(scene);
+		stage.show();	
+	}
 	
 	/**
 	 *This method initializes when the scene is done being generated. the font of the main title is located
@@ -380,12 +395,17 @@ public class MainController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
         try {
-        	Font font = Font.loadFont(new FileInputStream(new File("bin/application/fonts/Electrolize-Regular.ttf")), 40);
+        	Font font = Font.loadFont(new FileInputStream(new File("src/application/fonts/Electrolize-Regular.ttf")), 40);
         	mainTitle.setFont(font);
         	
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+		
+	}
+
+	public void setStage(Stage primaryStage) {
+		this.stage = primaryStage;
 		
 	}
 }

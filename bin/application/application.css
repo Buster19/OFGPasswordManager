@@ -8,6 +8,6 @@
 .circle{
 	-fx-background-color: transparent;
 }
-#MainPane{
+.root{
     -fx-background-image: url("background/carbonfiber.png");
 }
