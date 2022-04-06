@@ -2,49 +2,30 @@ package application.controller;
 
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import application.model.Credentials;
-import application.model.Encryption;
-import javafx.animation.RotateTransition;
-import javafx.animation.StrokeTransition;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import application.view.Animations;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /** 4/1/2022
  * This is the main controller that manages the data that is requested in the
@@ -53,107 +34,40 @@ import javafx.util.Duration;
  *
  */
 public class MainController implements Initializable {
+	
+	private FileHandlingController fileHandlingController;
 	/**
 	 * all different circle objects that are shown on the screen.
-	 * Wach will be set to a different color and will have an animation
+	 * Each will be set to a different color and will have an animation
 	 * 
 	 */
 	@FXML
 	private Circle circle,circle1,circle2,circle3;
-	
 	/**
-	 * This text display the main title on the screen. AkA the name of our project.
+	 * This class will call any custom animation that wants to be played
 	 */
-	@FXML
-	private Text mainTitle;
-	
+	private Animations animation;
 	/**
 	 * This shape is a custom shape made in svg path builder and it looks like a key hole that is in
 	 * the middle of the circle.
 	 */
 	@FXML
 	private SVGPath Key;
-	
 	/**
 	 * This is the root pane that holds all the objects that are stacked on it. 
 	 */
 	@FXML
 	private BorderPane MainPane;
-	
 	/**
 	 * These buttons are in the 3 smaller circles and have different functionality when pressed.
 	 */
 	@FXML
 	private Button locate,newFile,settings;
-	
 	/**
 	 * This is the stage that will get the root stage called in the Main.java class, so we
 	 * don't have to create a new stage, but instead, use the already existing one.
 	 */
 	private Stage stage;
-	
-	/**
-	 * This will turn true when the file that contains a .ofg extension is found
-	 */
-	private boolean containsOfg = false;
-	
-	/**
-	 * This will turn true when the file that contains a .ofg extension is found
-	 */
-	private boolean containsEnc = false;
-	
-	/**
-	 * This String array list will contain the name of the absolute paths of each file in the valid selected directory.
-	 */
-	private List<String> filePath = new ArrayList<String>();
-	
-	/**
-	 * This Observable class array named Credentials will contain an Arraylist of credential objects that will be from'
-	 * the encrypted file. This will be the return value for the decrypted method and will be used to display the contents in
-	 * a table.
-	 */
-	@FXML
-	private ObservableList<Credentials> products = FXCollections.observableArrayList();
-	
-	/**
-	 * This method will take in all the determined parameters and play the rotated animation 
-	 * accordingly.
-	 * @param node This will be any node that wants to be rotated. Our usage is the circles
-	 * @param reverse to see if the animation wants to be played in reverse
-	 * @param angle to see if the animation will rotate at a certain angle
-	 * @param time the amount of time each rotation will take
-	 * @param rate how fast the rotations will take to plav.
-	 * @param cycle how many times the animation will be played
-	 * 
-	 * 
-	 */
-	public void playRotationAnimation(Node node, Boolean reverse,int angle,double d,int rate, int cycle) {
-		RotateTransition rotation = new RotateTransition(Duration.seconds(d),node);
-		rotation.setAutoReverse(reverse);
-		rotation.setByAngle(angle);
-		rotation.setDelay(Duration.seconds(0));
-		rotation.setRate(rate);
-		rotation.setCycleCount(cycle);
-		rotation.play();
-	}
-	
-	/**
-	 * This method will take in the preferred circle and color, which will then be
-	 * processed to be filled on call. The cycle will on be one time since the desired color
-	 * will be filled. This animation also syncs up with the 3 smaller circle rotations.
-	 * @param c the determined circle that wants the strokes to be filled
-	 * @param color the color of preference the user want to use
-	 */
-	private void fillAnimation(Circle c, Color color) {
-		StrokeTransition stroke = new StrokeTransition(); 
-	    stroke.setAutoReverse(false);   
-	    stroke.setCycleCount(1);  
-	    stroke.setDuration(Duration.millis(300));       
-	    stroke.setToValue(color);    
-	    stroke.setShape(c);  
-	    stroke.play();
-	}
-	
 	/**
 	 * This method detects when the mouse entered one of the three smaller circles that
 	 * contain the buttons. it will proceed to play the circle rotation animation and will 
@@ -163,16 +77,16 @@ public class MainController implements Initializable {
 	@FXML 
 	private void mouseEnteredButton(MouseEvent event){
 		if(event.getSource() == locate) {
-			playRotationAnimation(circle1,false,360,0.5,1,1);
-			fillAnimation(circle1,Color.TOMATO);
+			animation.playRotationAnimation(circle1,false,360,0.5,1,1);
+			animation.fillAnimation(circle1,Color.TOMATO);
 		}
 		else if(event.getSource() == newFile) {
-			playRotationAnimation(circle2,false,360,0.5,1,1);
-			fillAnimation(circle2,Color.CORNFLOWERBLUE);
+			animation.playRotationAnimation(circle2,false,360,0.5,1,1);
+			animation.fillAnimation(circle2,Color.CORNFLOWERBLUE);
 		}
 		else if(event.getSource() == settings) {
-			playRotationAnimation(circle3,false,360,0.5,1,1);
-			fillAnimation(circle3,Color.WHEAT);
+			animation.playRotationAnimation(circle3,false,360,0.5,1,1);
+			animation.fillAnimation(circle3,Color.WHEAT);
 		}
 	}
 	/**
@@ -185,19 +99,18 @@ public class MainController implements Initializable {
 	@FXML
 	private void mouseExitedButton(MouseEvent event){
 		if(event.getSource() == locate) {
-			playRotationAnimation(circle1,true,-360,0.5,1,1);
-			fillAnimation(circle1,Color.GRAY);
+			animation.playRotationAnimation(circle1,true,-360,0.5,1,1);
+			animation.fillAnimation(circle1,Color.GRAY);
 		}
 		else if(event.getSource() == newFile) {
-			playRotationAnimation(circle2,true,-360,0.5,1,1);
-			fillAnimation(circle2,Color.GRAY);
+			animation.playRotationAnimation(circle2,true,-360,0.5,1,1);
+			animation.fillAnimation(circle2,Color.GRAY);
 		}
 		else if(event.getSource() == settings) {
-			playRotationAnimation(circle3,false,-360,0.5,1,1);
-			fillAnimation(circle3,Color.GRAY);
+			animation.playRotationAnimation(circle3,false,-360,0.5,1,1);
+			animation.fillAnimation(circle3,Color.GRAY);
 		}
 	}
-	
 	/**
 	 * This method will detect when the mouse is being dragged and will accept files that
 	 * want to be handled.
@@ -222,42 +135,19 @@ public class MainController implements Initializable {
 		if (files.size() > 1) {
 			circle.setStroke(Color.RED);
 			Key.setStroke(Color.RED);
-			playRotationAnimation(circle,false,360,10,1,10);
+			animation.playRotationAnimation(circle,false,360,10,1,10);
 			raiseAlert(AlertType.ERROR,"Invalid operation.","Please locate or drag the files your password contents are stored in."); 
 			files.clear();
 			event.consume();
 			return;
 		}
 		else {
-		handleFile(files.get(0));
+		fileHandlingController.handleFileDecryption(files.get(0));
 		files.clear();
 		event.consume();
 		}
 		
-	}
-		
-	/**
-	 * This method will take it a file from the file List and will go through conditional statements to see if the file
-	 * is the correct file. regular expressions are used to check the file extension name. It only will take enc or ofg file extension
-	 * @param file is the specific index of the files list data structure and will be processed one at a time
-	 * @return it will return whether this file has checked the validity
-	 */
-	private boolean checkTheFile(File file) {
-		if(file.isFile() == true && containsOfg == false || containsEnc == false) {
-			if(file.getName().matches(".*\\.ofg")) {
-				containsOfg = true;
-				System.out.println(containsOfg);
-				filePath.add(file.getAbsolutePath());
-				return containsOfg;
-			}
-			else if(file.getName().matches(".*\\.enc")) {
-				containsEnc = true;
-				filePath.add(file.getAbsolutePath());
-				return containsEnc;
-			}
-		}
-		return false;
-	} 
+	}	
 	/**
 	 * This method is the alternative to the drag and drop feature, just incase you don't
 	 * have the file with you and it's located else where. It will get the root stage and display the 
@@ -273,61 +163,12 @@ public class MainController implements Initializable {
 	        chooser.setTitle("Open Directory");
 	        File selectedFile = chooser.showDialog(stage);
 	        if (selectedFile != null) {
-	        	 handleFile(selectedFile);
+	        	fileHandlingController.handleFileDecryption(selectedFile);
 	        }
 	 
 	    }catch (Exception e) {
-	 
-	        System.out.println(e.getMessage());
+	    	raiseAlert(AlertType.ERROR,"Invalid operation.","Please locate or drag the files your password contents are stored in."); 
 	    }
-	}
-
-	/**
-	 * This method handles the files that are passed in through the drag and drop feature
-	 * or the locate file button. it will check to see if the directory passed only contains a length of two which will then
-	 * proceed to check each file in the checkfile method and will return a boolean if the file is valid. After that it will get the
-	 * absolute path of each file and will be processed as a string and then passed into the decrypt method for data handling. It will also
-	 * contain a password prompt for the user to enter. The encrypt method requires a password to be entered. if the first condition fails, then
-	 * it will raise an error, which the user will have to try again.
-	 * @param files the specific index of the files
-	 */
-	private void handleFile(File files) {
-		if(files.isDirectory() && files.listFiles().length  == 2){
-				File[] listOfFiles = files.listFiles();
-				
-				for (File file : listOfFiles) {
-					boolean isCorrectFile = checkTheFile(file);
-					if(isCorrectFile == true)
-						continue;
-					else if(isCorrectFile == false) {
-						circle.setStroke(Color.RED);
-						raiseAlert(AlertType.ERROR,"Invalid files","The files in the directory are invalid. "
-								+ "They must contain .ofg or .enc"); 
-						containsOfg = false;
-						containsEnc = false;
-						return;
-					}
-				}
-				containsOfg = false;
-				containsEnc = false;
-				playRotationAnimation(circle,false,360,10,1,10);
-				Encryption encryption = new Encryption();
-				try {
-					products = encryption.decryptFile(passwordPrompt(), filePath.get(0), filePath.get(1));
-					circle.setStroke(Color.GREEN);
-					Key.setStroke(Color.GREEN);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		else {
-			circle.setStroke(Color.RED);
-			Key.setStroke(Color.RED);
-			playRotationAnimation(circle,false,360,10,1,10);
-			raiseAlert(AlertType.ERROR,"Invalid files","The files in the directory are invalid. "
-					+ "They must contain .ofg or .enc"); 
-			}
 	}
 	
 	/**
@@ -347,35 +188,11 @@ public class MainController implements Initializable {
 	}
 	
 	/**
-	 * This method display a popup box that asks for a password. It uses the Passwordfield to protect the 
-	 * Inputed password for security. It displays a logo and the text prompt for the user to enter the password.
-	 * @return it returns the result of the inputed password the user entered from the dialog box
+	 * This method will set up a new scene whenever the button called 'New file' is pressed
+	 * it will then prompt the user to enter there credentials for encryption.
+	 * @param event gets the button action for New File when it is pressed
+	 * @throws IOException in case of a fatal error
 	 */
-	public String passwordPrompt() {
-	    Dialog<String> dialog = new Dialog<>();
-	    SVGPath svg = new SVGPath();
-	    dialog.setTitle("Password for Encrypted file");
-	    dialog.setHeaderText("Please enter password for your folder.");
-	    svg.setContent("M 40 25 A 5 5 0 1 1 45 25 L 50 40 L 35 40 Z");
-	    dialog.setGraphic(svg);
-	    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-	    PasswordField password = new PasswordField();
-	    HBox content = new HBox();
-	    content.setAlignment(Pos.CENTER_LEFT);
-	    content.setSpacing(10);
-	    content.getChildren().addAll(new Label("Password:"), password);
-	    dialog.getDialogPane().setContent(content);
-	    dialog.setResultConverter(dialogButton -> {
-	        if (dialogButton == ButtonType.OK) {
-	            return password.getText();
-	        }
-	        return null;
-	    });
-
-	    Optional<String> result = dialog.showAndWait();
-		return result.get();
-	}
 	@FXML
 	private void switchToFileCreation(ActionEvent event) throws IOException {
 		URL file = new File("src/application/view/FileCreation.fxml").toURI().toURL();
@@ -394,18 +211,10 @@ public class MainController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-        try {
-        	Font font = Font.loadFont(new FileInputStream(new File("src/application/fonts/Electrolize-Regular.ttf")), 40);
-        	mainTitle.setFont(font);
-        	
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-		
-	}
-
-	public void setStage(Stage primaryStage) {
-		this.stage = primaryStage;
-		
+			SceneStageController ssc = new SceneStageController();
+			stage = ssc.getStage();
+        	fileHandlingController = new FileHandlingController(circle,Key);
+        	animation = new Animations();
+        	//SettingsController settings = new SettingsController();	
 	}
 }

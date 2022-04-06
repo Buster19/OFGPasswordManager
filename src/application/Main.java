@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import application.controller.MainController;
+import application.controller.SceneStageController;
 import application.model.Encryption;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -35,8 +36,8 @@ public class Main extends Application {
 			Scene scene = new Scene(root,600,600);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
-			MainController controller = loader.getController();
-			controller.setStage(primaryStage);
+			SceneStageController ssc = new SceneStageController();
+			ssc.setStage(primaryStage);
 			primaryStage.setTitle("Off The Grid");
 			primaryStage.show();
 		} catch(Exception e) {
